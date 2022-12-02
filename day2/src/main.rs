@@ -1,43 +1,7 @@
 use std::io;
 use std::io::BufRead;
-use std::collections::HashMap;
-
-fn shape_value(c: char) -> u32 {
-    match c {
-        'A' => 0, 
-        'B' => 1,
-        'C' => 2,
-        'X' => 0,
-        'Y' => 1,
-        'Z' => 2,
-        _ => panic!("Unknown shape")
-    }
-}
 
 fn main() {
-    let game1_points: HashMap<(u32,u32),u32> =
-    // (opponent, me), points_for_my_move + points_vs_opponent
-        [((0, 0), 1 + 3),
-         ((1, 0), 1 + 0),
-         ((2, 0), 1 + 6),
-         ((0, 1), 2 + 6),
-         ((1, 1), 2 + 3),
-         ((2, 1), 2 + 0),
-         ((0, 2), 3 + 0),
-         ((1, 2), 3 + 6),
-         ((2, 2), 3 + 3),].iter().cloned().collect();
-
-    let game2_points: HashMap<(u32,u32),u32> =
-    // (opponent, desired_result), points_for_my_move + points_vs_opponent
-        [((0, 0), 3 + 0),
-         ((1, 0), 1 + 0),
-         ((2, 0), 2 + 0),
-         ((0, 1), 1 + 3),
-         ((1, 1), 2 + 3),
-         ((2, 1), 3 + 3),
-         ((0, 2), 2 + 6),
-         ((1, 2), 3 + 6),
-         ((2, 2), 1 + 6),].iter().cloned().collect();
     
     let mut score1 = 0;
     let mut score2 = 0;
@@ -47,11 +11,30 @@ fn main() {
             break
         }
 
-        let a = shape_value(line.chars().nth(0).unwrap());
-        let b = shape_value(line.chars().nth(2).unwrap());
-
-        score1 += game1_points.get(&(a, b)).unwrap();
-        score2 += game2_points.get(&(a, b)).unwrap();
+        score1 += match line.as_str() {
+            "A X" => 1 + 3,
+            "B X" => 1 + 0,
+            "C X" => 1 + 6,
+            "A Y" => 2 + 6,
+            "B Y" => 2 + 3,
+            "C Y" => 2 + 0,
+            "A Z" => 3 + 0,
+            "B Z" => 3 + 6,
+            "C Z" => 3 + 3,
+            _ => panic!("wrong input")
+        };
+        score2 += match line.as_str() {
+            "A X" => 3 + 0,
+            "B X" => 1 + 0,
+            "C X" => 2 + 0,
+            "A Y" => 1 + 3,
+            "B Y" => 2 + 3,
+            "C Y" => 3 + 3,
+            "A Z" => 2 + 6,
+            "B Z" => 3 + 6,
+            "C Z" => 1 + 6,
+            _ => panic!("wrong input")
+        };
     }
 
     println!("part1: {}", score1);
