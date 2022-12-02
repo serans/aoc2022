@@ -1,11 +1,10 @@
-use std::io;
-use std::io::BufRead;
+use std::fs::File;
+use std::io::{BufReader, Lines};
 
-fn main() {
-    let stdin = io::stdin();
+pub fn solve(lines: Lines<BufReader<File>>) {
     let mut calories: Vec<u32> = Vec::new();
     let mut current_calories: u32 = 0;
-    for line in stdin.lock().lines().flatten() {
+    for line in lines.flatten() {
         if line.is_empty() {
             calories.push(current_calories);
             current_calories = 0;

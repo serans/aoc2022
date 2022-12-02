@@ -1,12 +1,12 @@
-use std::io;
-use std::io::BufRead;
+use std::fs::File;
+use std::io::{BufReader, Lines};
 
-fn main() {
+pub fn solve(lines: Lines<BufReader<File>>) {
     
     let mut score1 = 0;
     let mut score2 = 0;
 
-    for line in io::stdin().lock().lines().flatten() {
+    for line in lines.flatten() {
         if line.is_empty() {
             break
         }
