@@ -12,6 +12,7 @@ fn main() {
         }
 
         score1 += match line.as_str() {
+            //input => points_for_shape + points_against_opponent
             "A X" => 1 + 3,
             "B X" => 1 + 0,
             "C X" => 1 + 6,
@@ -24,6 +25,7 @@ fn main() {
             _ => panic!("wrong input")
         };
         score2 += match line.as_str() {
+            //input => points_for_shape + points_against_opponent
             "A X" => 3 + 0,
             "B X" => 1 + 0,
             "C X" => 2 + 0,
