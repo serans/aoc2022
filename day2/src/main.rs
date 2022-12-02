@@ -52,8 +52,8 @@ fn main() {
 
         score1 += game1_points.get(&(a, b)).unwrap();
         score2 += game2_points.get(&(a, b)).unwrap();
-
     }
+
     println!("part1: {}", score1);
     println!("part2: {}", score2);
 }
