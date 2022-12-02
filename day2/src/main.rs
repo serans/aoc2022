@@ -2,8 +2,7 @@ use std::io;
 use std::io::BufRead;
 use std::collections::HashMap;
 
-
-fn shape_value(c: char) -> i32 {
+fn shape_value(c: char) -> u32 {
     match c {
         'A' => 0, 
         'B' => 1,
@@ -16,7 +15,7 @@ fn shape_value(c: char) -> i32 {
 }
 
 fn main() {
-    let game1_points: HashMap<(i32,i32),i32> =
+    let game1_points: HashMap<(u32,u32),u32> =
     // (opponent, me), points_for_my_move + points_vs_opponent
         [((0, 0), 1 + 3),
          ((1, 0), 1 + 0),
@@ -28,7 +27,7 @@ fn main() {
          ((1, 2), 3 + 6),
          ((2, 2), 3 + 3),].iter().cloned().collect();
 
-    let game2_points: HashMap<(i32,i32),i32> =
+    let game2_points: HashMap<(u32,u32),u32> =
     // (opponent, desired_result), points_for_my_move + points_vs_opponent
         [((0, 0), 3 + 0),
          ((0, 1), 1 + 3),
