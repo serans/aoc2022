@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 use std::path::Path;
 use std::fs::File;
@@ -15,6 +16,8 @@ where P: AsRef<Path>, {
 fn main() {
     //day1::solve(read_lines("input/day1.txt"));
     //day2::solve(read_lines("input/day2.txt"));
-    day3::solve2(read_lines("input/day3.txt"));
+    //day3::solve1(read_lines("input/day3.txt"));
+    //day3::solve2(read_lines("input/day3.txt"));
+    day4::solve(read_lines("input/day4.txt"));
 }
 
