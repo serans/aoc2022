@@ -49,8 +49,8 @@ fn stack_top(stacks: &CratesLayout) -> String {
 #[allow(dead_code)]
 pub fn solve(mut lines: impl Iterator<Item=String>) {
 
-    let mut stacks_silver = parse_crates_layout(lines.by_ref());
-    let mut stacks_gold = copy(&stacks_silver);
+    let mut layout_problem1 = parse_crates_layout(lines.by_ref());
+    let mut layout_problem2 = copy(&layout_problem1);
 
     // PARSE MOVES
     for line in lines.by_ref() {
@@ -61,15 +61,15 @@ pub fn solve(mut lines: impl Iterator<Item=String>) {
         let num_moves = line[1].parse::<usize>().unwrap();
         let origin = line[3].parse::<usize>().unwrap()-1;
         let dest = line[5].parse::<usize>().unwrap()-1;
-        let dest_size = stacks_gold[dest].len();
+        let dest_size = layout_problem2[dest].len();
         for _ in 0..num_moves {
-            let c = stacks_silver[origin].pop().unwrap();
-            stacks_silver[dest].push(c);
-            let c = stacks_gold[origin].pop().unwrap();
-            stacks_gold[dest].insert(dest_size, c);
+            let c = layout_problem1[origin].pop().unwrap();
+            layout_problem1[dest].push(c);
+            let c = layout_problem2[origin].pop().unwrap();
+            layout_problem2[dest].insert(dest_size, c);
         }
     }
 
-    println!("Top of stack for 1st problem: {}",stack_top(&stacks_silver));
-    println!("Top of stack for 2nd problem: {}",stack_top(&stacks_gold));
+    println!("Top of stack for 1st problem: {}",stack_top(&layout_problem1));
+    println!("Top of stack for 2nd problem: {}",stack_top(&layout_problem2));
 }
