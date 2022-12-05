@@ -7,7 +7,6 @@ fn parse_crates_layout(lines: impl Iterator<Item=String>) -> (CratesLayout, Crat
     let mut stack1: CratesLayout = Default::default();
     let mut stack2: CratesLayout = Default::default();
 
-    // PARSE INITIAL STATE
     for line in lines {
         if line.is_empty() {
             break;
