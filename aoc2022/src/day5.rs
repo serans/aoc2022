@@ -1,23 +1,9 @@
-
-use std::fs::File;
-use std::io::{BufReader, Lines};
-
-
-fn print_stacks(stacks: &[Vec<char>; NUM_STACKS]) {
-    for (i,s) in stacks.iter().enumerate() {
-        print!("{}",i+1);
-        for c in s {
-            print!(" [{}] ", c);
-        }
-        println!();
-    }
-}
-
-fn stack_top(stacks: &[Vec<char>; NUM_STACKS]) {
+fn stack_top(stacks: &[Vec<char>; NUM_STACKS]) -> String {
+    let mut output = String::new();
     for s in stacks {
-        print!("{}", s.last().unwrap());
+        output.push(*s.last().unwrap());
     }
-    println!();
+    output
 }
 
 
@@ -25,45 +11,46 @@ const NUM_STACKS:usize = 9;
 const STACK_WIDTH:usize = 4;
 
 #[allow(dead_code)]
-pub fn solve(lines: Lines<BufReader<File>>) {
-    let mut stacks: [Vec<char>; NUM_STACKS] = Default::default();
+pub fn solve(mut lines: impl Iterator<Item=String>) {
+    let mut stacks_silver: [Vec<char>; NUM_STACKS] = Default::default();
+    let mut stacks_gold: [Vec<char>; NUM_STACKS] = Default::default();
 
     // PARSE INITIAL STATE
-    let mut parsing_stack = true;
-
-    let mut lines = lines.into_iter();
     for line in lines.by_ref() {
 
-        let line = line.unwrap();
-        if parsing_stack {
-            if line.is_empty() {
-                parsing_stack = false;
-            }
-            if ! line.starts_with("[") {
-                continue;
-            }
-            for stack_number in 0..NUM_STACKS {
-                let c = line.chars().nth(1 + (stack_number * STACK_WIDTH)).unwrap();
-                if c != ' ' {
-                    stacks[stack_number].insert(0,c);
-                }
-            }
-        } else {
-            // parsing move
-            let line = line.split(" ").collect::<Vec<&str>>();
-            if line.len() != 6 {
-                panic!("wrong format");
-            }
-            let num_moves = line[1].parse::<usize>().unwrap();
-            let origin = line[3].parse::<usize>().unwrap()-1;
-            let dest = line[5].parse::<usize>().unwrap()-1;
-            for _ in 0..num_moves {
-                let c = stacks[origin].pop().unwrap();
-                stacks[dest].push(c);
+        if line.is_empty() {
+            break;
+        }
+        if ! line.starts_with("[") {
+            continue;
+        }
+        for stack_number in 0..NUM_STACKS {
+            let c = line.chars().nth(1 + (stack_number * STACK_WIDTH)).unwrap();
+            if c != ' ' {
+                stacks_silver[stack_number].insert(0,c);
+                stacks_gold[stack_number].insert(0,c);
             }
         }
     }
 
-    print_stacks(&stacks);
-    stack_top(&stacks);
+    // PARSE MOVES
+    for line in lines.by_ref() {
+        let line = line.split(" ").collect::<Vec<&str>>();
+        if line.len() != 6 {
+            panic!("wrong format");
+        }
+        let num_moves = line[1].parse::<usize>().unwrap();
+        let origin = line[3].parse::<usize>().unwrap()-1;
+        let dest = line[5].parse::<usize>().unwrap()-1;
+        let dest_size = stacks_gold[dest].len();
+        for _ in 0..num_moves {
+            let c = stacks_silver[origin].pop().unwrap();
+            stacks_silver[dest].push(c);
+            let c = stacks_gold[origin].pop().unwrap();
+            stacks_gold[dest].insert(dest_size, c);
+        }
+    }
+
+    println!("Top of stack for 1st problem: {}",stack_top(&stacks_silver));
+    println!("Top of stack for 2nd problem: {}",stack_top(&stacks_gold));
 }

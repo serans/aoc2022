@@ -20,6 +20,6 @@ fn main() {
     //day3::solve1(read_lines("input/day3.txt"));
     //day3::solve2(read_lines("input/day3.txt"));
     //day4::solve(read_lines("input/day4.txt"));
-    day5::solve(read_lines("input/day5.txt"));
+    day5::solve(read_lines("input/day5.txt").flatten());
 }
 
