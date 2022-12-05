@@ -1,22 +1,24 @@
-fn stack_top(stacks: &[Vec<char>; NUM_STACKS]) -> String {
-    let mut output = String::new();
-    for s in stacks {
-        output.push(*s.last().unwrap());
-    }
-    output
-}
-
-
 const NUM_STACKS:usize = 9;
 const STACK_WIDTH:usize = 4;
 
-#[allow(dead_code)]
-pub fn solve(mut lines: impl Iterator<Item=String>) {
-    let mut stacks_silver: [Vec<char>; NUM_STACKS] = Default::default();
-    let mut stacks_gold: [Vec<char>; NUM_STACKS] = Default::default();
+type CratesLayout = [Vec<char>; NUM_STACKS];
+
+fn copy(origin: &CratesLayout) -> CratesLayout {
+    let mut dest: CratesLayout = Default::default();
+
+    for (i, stack) in origin.iter().enumerate() {
+        for c in stack {
+            dest[i].push(*c);
+        }
+    }
+    dest
+}
+
+fn parse_crates_layout(lines: impl Iterator<Item=String>) -> CratesLayout {
+    let mut stack: CratesLayout = Default::default();
 
     // PARSE INITIAL STATE
-    for line in lines.by_ref() {
+    for line in lines {
 
         if line.is_empty() {
             break;
@@ -27,11 +29,28 @@ pub fn solve(mut lines: impl Iterator<Item=String>) {
         for stack_number in 0..NUM_STACKS {
             let c = line.chars().nth(1 + (stack_number * STACK_WIDTH)).unwrap();
             if c != ' ' {
-                stacks_silver[stack_number].insert(0,c);
-                stacks_gold[stack_number].insert(0,c);
+                stack[stack_number].insert(0,c);
             }
         }
     }
+    stack
+}
+
+fn stack_top(stacks: &CratesLayout) -> String {
+    let mut output = String::new();
+    for s in stacks {
+        output.push(*s.last().unwrap());
+    }
+    output
+}
+
+
+
+#[allow(dead_code)]
+pub fn solve(mut lines: impl Iterator<Item=String>) {
+
+    let mut stacks_silver = parse_crates_layout(lines.by_ref());
+    let mut stacks_gold = copy(&stacks_silver);
 
     // PARSE MOVES
     for line in lines.by_ref() {
