@@ -3,23 +3,12 @@ const STACK_WIDTH:usize = 4;
 
 type CratesLayout = [Vec<char>; NUM_STACKS];
 
-fn copy(origin: &CratesLayout) -> CratesLayout {
-    let mut dest: CratesLayout = Default::default();
-
-    for (i, stack) in origin.iter().enumerate() {
-        for c in stack {
-            dest[i].push(*c);
-        }
-    }
-    dest
-}
-
-fn parse_crates_layout(lines: impl Iterator<Item=String>) -> CratesLayout {
-    let mut stack: CratesLayout = Default::default();
+fn parse_crates_layout(lines: impl Iterator<Item=String>) -> (CratesLayout, CratesLayout) {
+    let mut stack1: CratesLayout = Default::default();
+    let mut stack2: CratesLayout = Default::default();
 
     // PARSE INITIAL STATE
     for line in lines {
-
         if line.is_empty() {
             break;
         }
@@ -29,11 +18,12 @@ fn parse_crates_layout(lines: impl Iterator<Item=String>) -> CratesLayout {
         for stack_number in 0..NUM_STACKS {
             let c = line.chars().nth(1 + (stack_number * STACK_WIDTH)).unwrap();
             if c != ' ' {
-                stack[stack_number].insert(0,c);
+                stack1[stack_number].insert(0,c);
+                stack2[stack_number].insert(0,c);
             }
         }
     }
-    stack
+    (stack1, stack2)
 }
 
 fn stack_top(stacks: &CratesLayout) -> String {
@@ -44,15 +34,11 @@ fn stack_top(stacks: &CratesLayout) -> String {
     output
 }
 
-
-
 #[allow(dead_code)]
 pub fn solve(mut lines: impl Iterator<Item=String>) {
 
-    let mut layout_problem1 = parse_crates_layout(lines.by_ref());
-    let mut layout_problem2 = copy(&layout_problem1);
+    let (mut layout_problem1, mut layout_problem2) = parse_crates_layout(lines.by_ref());
 
-    // PARSE MOVES
     for line in lines.by_ref() {
         let line = line.split(" ").collect::<Vec<&str>>();
         if line.len() != 6 {
