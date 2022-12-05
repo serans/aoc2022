@@ -21,13 +21,13 @@ fn get_repeated_item_priority(line: &String) -> usize {
         if i < half {
             values[priority-1] = true;
         } else if values[priority-1] {
-                return priority
+            return priority
         }
     }
     panic!("No duplicate found")
 }
 
-fn get_group_priorities(line1: &String, line2: &String, line3: &String) -> usize {
+fn get_group_badge(line1: &String, line2: &String, line3: &String) -> usize {
     let mut values:[u8; 52] = [0; 52];
     for item in line1.as_bytes() {
         let priority = priority(item);
@@ -65,7 +65,7 @@ pub fn solve2(lines: Lines<BufReader<File>>) {
 
     let lines = lines.flatten().collect::<Vec<String>>();
     for c in lines.chunks_exact(3) {
-        score += get_group_priorities(&c[0], &c[1], &c[2]); 
+        score += get_group_badge(&c[0], &c[1], &c[2]); 
     }
     println!("problem2: {}", score);
 }
