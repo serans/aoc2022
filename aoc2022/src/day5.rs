@@ -41,9 +41,6 @@ pub fn solve(mut lines: impl Iterator<Item=String>) {
 
     for line in lines.by_ref() {
         let line = line.split(" ").collect::<Vec<&str>>();
-        if line.len() != 6 {
-            panic!("wrong format");
-        }
         let num_moves = line[1].parse::<usize>().unwrap();
         let origin = line[3].parse::<usize>().unwrap()-1;
         let dest = line[5].parse::<usize>().unwrap()-1;
