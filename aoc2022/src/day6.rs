@@ -5,20 +5,20 @@ fn all_elements_unique(text: &Vec<char>) -> bool {
     text.len() == letter_set.len()
 }
 
-fn find_unique_sequence(len: usize, text: &String) -> usize {
+fn find_unique_sequence(len: usize, text: &String) -> Option<usize> {
     let mut buff = std::vec::from_elem(' ', len);
     for (i,c) in text.chars().enumerate() {
         buff[i % len] = c;
         if i > len && all_elements_unique(&buff) {
-            return i+1
+            return Some(i+1)
         }
     }
-    panic!("no solution")
+    None
 }
 
 #[allow(dead_code)]
 pub fn solve(mut lines: impl Iterator<Item=String>) {
     let text = lines.next().unwrap();
-    println!("Problem 1: {}", find_unique_sequence( 4, &text));
-    println!("Problem 2: {}", find_unique_sequence(14, &text));
+    println!("Problem 1: {}", find_unique_sequence( 4, &text).unwrap());
+    println!("Problem 2: {}", find_unique_sequence(14, &text).unwrap());
 }
