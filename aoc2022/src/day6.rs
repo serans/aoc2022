@@ -1,23 +1,25 @@
 use std::collections::HashSet;
 
-const CODE_LENGTH:usize = 14;
+fn all_letters_differ(text: &Vec<char>) -> bool {
+    let letters = HashSet::<char>::from_iter(text.iter().cloned());
+    text.len() == letters.len()
+}
 
-fn all_different(buff:&[char; CODE_LENGTH]) -> bool {
-    let buff_set = HashSet::<char>::from_iter(buff.iter().cloned());
-    buff_set.len() == CODE_LENGTH
+fn find_unique_sequence(len: usize, text: &String) -> usize {
+    let mut buff = std::vec::from_elem(' ', len);
+    for (i,c) in text.chars().enumerate() {
+        let c = c;
+        buff[i % len] = c;
+        if i > len && all_letters_differ(&buff) {
+            return i+1
+        }
+    }
+    panic!("no solution")
 }
 
 #[allow(dead_code)]
 pub fn solve(mut lines: impl Iterator<Item=String>) {
-    let line = lines.next().unwrap();
-    let mut buff: [char; CODE_LENGTH] = Default::default();
-    for (i,c) in line.chars().enumerate() {
-        let c = c;
-        println!("{}:{}", i, c);
-        buff[i % CODE_LENGTH] = c;
-        if i > CODE_LENGTH && all_different(&buff) {
-            println!("solution {}", i+1) ;
-            break;
-        }
-    }
+    let text = lines.next().unwrap();
+    println!("Problem 1: {}", find_unique_sequence( 4, &text));
+    println!("Problem 2: {}", find_unique_sequence(14, &text));
 }
