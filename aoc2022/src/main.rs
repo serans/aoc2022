@@ -3,6 +3,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 
 use std::path::Path;
 use std::fs::File;
@@ -20,6 +21,7 @@ fn main() {
     //day3::solve1(read_lines("input/day3.txt"));
     //day3::solve2(read_lines("input/day3.txt"));
     //day4::solve(read_lines("input/day4.txt"));
-    day5::solve(read_lines("input/day5.txt").flatten());
+    //day5::solve(read_lines("input/day5.txt").flatten());
+    day6::solve(read_lines("input/day6.txt").flatten());
 }
 
