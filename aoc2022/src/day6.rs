@@ -8,7 +8,6 @@ fn all_elements_unique(text: &Vec<char>) -> bool {
 fn find_unique_sequence(len: usize, text: &String) -> usize {
     let mut buff = std::vec::from_elem(' ', len);
     for (i,c) in text.chars().enumerate() {
-        let c = c;
         buff[i % len] = c;
         if i > len && all_elements_unique(&buff) {
             return i+1
