@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-fn all_letters_differ(text: &Vec<char>) -> bool {
+fn all_elements_unique(text: &Vec<char>) -> bool {
     let letters = HashSet::<char>::from_iter(text.iter().cloned());
     text.len() == letters.len()
 }
@@ -10,7 +10,7 @@ fn find_unique_sequence(len: usize, text: &String) -> usize {
     for (i,c) in text.chars().enumerate() {
         let c = c;
         buff[i % len] = c;
-        if i > len && all_letters_differ(&buff) {
+        if i > len && all_elements_unique(&buff) {
             return i+1
         }
     }
