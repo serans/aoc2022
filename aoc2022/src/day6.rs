@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
 fn all_elements_unique(text: &Vec<char>) -> bool {
-    let letters = HashSet::<char>::from_iter(text.iter().cloned());
-    text.len() == letters.len()
+    let letter_set = HashSet::<char>::from_iter(text.iter().cloned());
+    text.len() == letter_set.len()
 }
 
 fn find_unique_sequence(len: usize, text: &String) -> usize {
