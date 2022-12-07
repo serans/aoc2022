@@ -1,3 +1,2 @@
 #[allow(dead_code)]
-pub fn solve(lines: impl Iterator<Item = String>) {
-}
+pub fn solve(lines: impl Iterator<Item = String>) {}

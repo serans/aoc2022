@@ -52,6 +52,9 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     let problem2_size = dirs
         .iter()
         .filter(|d| d.size >= space_to_free)
-        .fold(used, |acc, item| if acc < item.size { acc } else { item.size });
+        .fold(
+            used,
+            |min, d| if min < d.size { min } else { d.size },
+        );
     println!("problem 2: {}", problem2_size);
 }
