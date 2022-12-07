@@ -19,7 +19,7 @@ pub fn parse_directories(lines: impl Iterator<Item = String>) -> Vec<Dir> {
         } else if l == "$ cd .." {
             curr_idx = filesystem[curr_idx].parent.unwrap();
         } else if l.starts_with("$ cd") {
-            // note: this works because no dir is listed twice
+            // note: this only works because no dir is listed twice
             filesystem.push(Dir {
                 parent: Some(curr_idx),
                 dirsize: 0,
@@ -52,11 +52,8 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     );
     println!("problem 1: {}", problem1_size);
 
-    const TOTAL: usize = 70000000;
-    const REQUIRED_SPACE: usize = 30000000;
     let used = dirs[0].dirsize;
-    let space_to_free = used - (TOTAL-REQUIRED_SPACE);
-
+    let space_to_free = used - (70000000 - 30000000);
     let problem2_size = dirs.iter().fold(None, |accum, item| {
         match accum {
             None => {
