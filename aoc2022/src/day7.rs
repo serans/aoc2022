@@ -51,6 +51,7 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     let dirs = parse_directories(lines);
 
     let mut problem1_size = 0;
+    let xxx = dirs.reduce(|accum, item| { if item.dirsize <= 100000 {accum+=item.dirsize} });
     for dir in &dirs {
         if dir.dirsize <= 100000 {
             problem1_size += dir.dirsize;
