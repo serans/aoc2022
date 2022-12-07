@@ -43,8 +43,7 @@ pub fn parse_directories(lines: impl Iterator<Item = String>) -> Vec<Dir> {
 pub fn solve(lines: impl Iterator<Item = String>) {
     let dirs = parse_directories(lines);
 
-    //let problem1_size = dirs.iter().filter(|d| d.size <= 100000).fold(0, |acc, item| {acc+item.size});
-    let problem1_size = dirs.iter().filter(|d| d.size <= 100000).sum();
+    let problem1_size = dirs.iter().filter(|d| d.size <= 100000).fold(0, |acc, item| {acc+item.size});
     println!("problem 1: {}", problem1_size);
 
     let used = dirs[0].size;
