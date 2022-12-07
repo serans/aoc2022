@@ -50,6 +50,7 @@ pub fn solve(lines: impl Iterator<Item = String>) {
             accum
         }
     );
+    let problem1_size = dirs.iter().filter(|d| d.size <= 100000).fold(0, |acc, item| {acc+item.size});
     println!("problem 1: {}", problem1_size);
 
     let used = dirs[0].size;
