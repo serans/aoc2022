@@ -3,7 +3,6 @@ use std::collections::HashMap;
 pub struct Dir {
     parent: Option<usize>,
     child: HashMap<String, usize>,
-    name: String,
     dirsize: usize
 }
 
@@ -13,7 +12,6 @@ pub fn parse_directories(lines: impl Iterator<Item=String>) -> Vec<Dir> {
     filesystem.push(Dir{ 
         parent: None, 
         child:HashMap::new(),
-        name: String::from("/"), 
         dirsize:0,
     });
 
@@ -32,7 +30,6 @@ pub fn parse_directories(lines: impl Iterator<Item=String>) -> Vec<Dir> {
                     filesystem.push(Dir{
                         parent: Some(curr_idx),
                         child: HashMap::new(),
-                        name: dirname,
                         dirsize: 0,
                     });
                     curr_idx = filesystem.len()-1;
@@ -73,6 +70,7 @@ pub fn solve(lines: impl Iterator<Item=String>) {
         }
     }
     println!("problem 1: {}", problem1_size);    
+
     const TOTAL: usize = 70000000;
     const REQUIRED_SPACE:usize = 30000000;
     const USABLE:usize = TOTAL - REQUIRED_SPACE;
