@@ -28,9 +28,9 @@ pub fn parse_directories(lines: impl Iterator<Item = String>) -> Vec<Dir> {
             filesystem[dir_index].size += fsize;
             // update parent dirs
             let mut parent_id = filesystem[dir_index].parent;
-            while parent_id.is_some() {
-                filesystem[parent_id.unwrap()].size += fsize;
-                parent_id = filesystem[parent_id.unwrap()].parent;
+            while let Some(parent) = parent_id {
+                filesystem[parent].size += fsize;
+                parent_id = filesystem[parent].parent;
             }
         }
     }
