@@ -1,8 +1,5 @@
-use std::collections::HashMap;
-
 pub struct Dir {
     parent: Option<usize>,
-    child: HashMap<String, usize>,
     dirsize: usize
 }
 
@@ -11,7 +8,6 @@ pub fn parse_directories(lines: impl Iterator<Item=String>) -> Vec<Dir> {
 
     filesystem.push(Dir{ 
         parent: None, 
-        child:HashMap::new(),
         dirsize:0,
     });
 
@@ -23,21 +19,12 @@ pub fn parse_directories(lines: impl Iterator<Item=String>) -> Vec<Dir> {
         } else if l == "$ cd .." {
             curr_idx = filesystem[curr_idx].parent.unwrap();
         } else if l.starts_with("$ cd") {
-            let dirname = String::from(l.split("cd").nth(1).unwrap().trim());
-            match filesystem[curr_idx].child.get(&dirname) {
-                None => {
-                    // new dir
-                    filesystem.push(Dir{
-                        parent: Some(curr_idx),
-                        child: HashMap::new(),
-                        dirsize: 0,
-                    });
-                    curr_idx = filesystem.len()-1;
-                }
-                Some(x) => {
-                    curr_idx = *x;
-                }
-            }
+            // note: this works because no dir is listed twice
+            filesystem.push(Dir{
+                parent: Some(curr_idx),
+                dirsize: 0,
+            });
+            curr_idx = filesystem.len()-1;
         } else if ! l.starts_with("$ ls") && ! l.starts_with("dir") {
             let fsize = l.split(" ").next().unwrap().parse::<usize>().unwrap();
             filesystem[curr_idx].dirsize += fsize;
