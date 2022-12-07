@@ -1,14 +1,14 @@
 pub struct Dir {
     parent: Option<usize>,
-    dirsize: usize
+    dirsize: usize,
 }
 
-pub fn parse_directories(lines: impl Iterator<Item=String>) -> Vec<Dir> {
-    let mut filesystem: Vec<Dir> = Vec::new();    
+pub fn parse_directories(lines: impl Iterator<Item = String>) -> Vec<Dir> {
+    let mut filesystem: Vec<Dir> = Vec::new();
 
-    filesystem.push(Dir{ 
-        parent: None, 
-        dirsize:0,
+    filesystem.push(Dir {
+        parent: None,
+        dirsize: 0,
     });
 
     let mut curr_idx = 0;
@@ -20,12 +20,12 @@ pub fn parse_directories(lines: impl Iterator<Item=String>) -> Vec<Dir> {
             curr_idx = filesystem[curr_idx].parent.unwrap();
         } else if l.starts_with("$ cd") {
             // note: this works because no dir is listed twice
-            filesystem.push(Dir{
+            filesystem.push(Dir {
                 parent: Some(curr_idx),
                 dirsize: 0,
             });
-            curr_idx = filesystem.len()-1;
-        } else if ! l.starts_with("$ ls") && ! l.starts_with("dir") {
+            curr_idx = filesystem.len() - 1;
+        } else if !l.starts_with("$ ls") && !l.starts_with("dir") {
             let fsize = l.split(" ").next().unwrap().parse::<usize>().unwrap();
             filesystem[curr_idx].dirsize += fsize;
             // update parent dirs
@@ -39,7 +39,7 @@ pub fn parse_directories(lines: impl Iterator<Item=String>) -> Vec<Dir> {
                     None => {
                         break;
                     }
-                } 
+                }
             }
         }
     }
@@ -47,7 +47,7 @@ pub fn parse_directories(lines: impl Iterator<Item=String>) -> Vec<Dir> {
 }
 
 #[allow(dead_code)]
-pub fn solve(lines: impl Iterator<Item=String>) {
+pub fn solve(lines: impl Iterator<Item = String>) {
     let dirs = parse_directories(lines);
 
     let mut problem1_size = 0;
@@ -56,21 +56,27 @@ pub fn solve(lines: impl Iterator<Item=String>) {
             problem1_size += dir.dirsize;
         }
     }
-    println!("problem 1: {}", problem1_size);    
+    println!("problem 1: {}", problem1_size);
 
     const TOTAL: usize = 70000000;
-    const REQUIRED_SPACE:usize = 30000000;
-    const USABLE:usize = TOTAL - REQUIRED_SPACE;
+    const REQUIRED_SPACE: usize = 30000000;
+    const USABLE: usize = TOTAL - REQUIRED_SPACE;
     let used = dirs[0].dirsize;
 
     let space_to_free = used - USABLE;
 
-    let mut problem2_size:Option<usize> = None;
+    let mut problem2_size: Option<usize> = None;
     for dir in &dirs {
         if dir.dirsize >= space_to_free {
             match problem2_size {
-                None => { problem2_size = Some(dir.dirsize);}
-                Some(x) => { if x > dir.dirsize { problem2_size = Some(dir.dirsize) } }
+                None => {
+                    problem2_size = Some(dir.dirsize);
+                }
+                Some(x) => {
+                    if x > dir.dirsize {
+                        problem2_size = Some(dir.dirsize)
+                    }
+                }
             }
         }
     }

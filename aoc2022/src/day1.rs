@@ -16,6 +16,6 @@ pub fn solve(lines: Lines<BufReader<File>>) {
 
     calories.sort_by(|a, b| b.cmp(a)); // reverse sorting order (ie descending)
     println!("Top elve carries: {}", calories[0]);
-    let top3:u32 = calories.iter().take(3).sum();
-    println!("Top 3 elves carry: {}", top3); 
+    let top3: u32 = calories.iter().take(3).sum();
+    println!("Top 3 elves carry: {}", top3);
 }

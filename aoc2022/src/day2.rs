@@ -3,13 +3,12 @@ use std::io::{BufReader, Lines};
 
 #[allow(dead_code)]
 pub fn solve(lines: Lines<BufReader<File>>) {
-    
     let mut score1 = 0;
     let mut score2 = 0;
 
     for line in lines.flatten() {
         if line.is_empty() {
-            break
+            break;
         }
 
         score1 += match line.as_str() {
@@ -23,7 +22,7 @@ pub fn solve(lines: Lines<BufReader<File>>) {
             "A Z" => 3 + 0,
             "B Z" => 3 + 6,
             "C Z" => 3 + 3,
-            _ => panic!("wrong input")
+            _ => panic!("wrong input"),
         };
 
         score2 += match line.as_str() {
@@ -37,11 +36,10 @@ pub fn solve(lines: Lines<BufReader<File>>) {
             "A Z" => 2 + 6,
             "B Z" => 3 + 6,
             "C Z" => 1 + 6,
-            _ => panic!("wrong input")
+            _ => panic!("wrong input"),
         };
     }
 
     println!("part1: {}", score1);
     println!("part2: {}", score2);
 }
-
