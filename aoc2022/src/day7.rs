@@ -1,6 +1,6 @@
 pub struct Dir {
     parent: Option<usize>,
-    dirsize: usize,
+    size: usize,
 }
 
 pub fn parse_directories(lines: impl Iterator<Item = String>) -> Vec<Dir> {
@@ -8,30 +8,30 @@ pub fn parse_directories(lines: impl Iterator<Item = String>) -> Vec<Dir> {
 
     filesystem.push(Dir {
         parent: None,
-        dirsize: 0,
+        size: 0,
     });
 
-    let mut curr_idx = 0;
+    let mut dir_index = 0;
 
     for l in lines {
         if l == "$ cd /" {
-            curr_idx = 0;
+            dir_index = 0;
         } else if l == "$ cd .." {
-            curr_idx = filesystem[curr_idx].parent.unwrap();
+            dir_index = filesystem[dir_index].parent.unwrap();
         } else if l.starts_with("$ cd") {
             // note: this only works because no dir is listed twice
             filesystem.push(Dir {
-                parent: Some(curr_idx),
-                dirsize: 0,
+                parent: Some(dir_index),
+                size: 0,
             });
-            curr_idx = filesystem.len() - 1;
+            dir_index = filesystem.len() - 1;
         } else if !l.starts_with("$ ls") && !l.starts_with("dir") {
             let fsize = l.split(" ").next().unwrap().parse::<usize>().unwrap();
-            filesystem[curr_idx].dirsize += fsize;
+            filesystem[dir_index].size += fsize;
             // update parent dirs
-            let mut parent_id = filesystem[curr_idx].parent;
+            let mut parent_id = filesystem[dir_index].parent;
             while parent_id.is_some() {
-                filesystem[parent_id.unwrap()].dirsize += fsize;
+                filesystem[parent_id.unwrap()].size += fsize;
                 parent_id = filesystem[parent_id.unwrap()].parent;
             }
         }
@@ -44,26 +44,26 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     let dirs = parse_directories(lines);
 
     let problem1_size = dirs.iter().fold(0, |accum, item| 
-        if item.dirsize <= 100000 {
-            accum + item.dirsize
+        if item.size <= 100000 {
+            accum + item.size
         } else {
             accum
         }
     );
     println!("problem 1: {}", problem1_size);
 
-    let used = dirs[0].dirsize;
+    let used = dirs[0].size;
     let space_to_free = used - (70000000 - 30000000);
     let problem2_size = dirs.iter().fold(None, |accum, item| {
         match accum {
             None => {
-                Some(item.dirsize)
+                Some(item.size)
             }
-            Some(dirsize) => {
-                if item.dirsize >= space_to_free && item.dirsize < dirsize {
-                    Some(item.dirsize)
+            Some(size) => {
+                if item.size >= space_to_free && item.size < size {
+                    Some(item.size)
                 } else {
-                    Some(dirsize)
+                    Some(size)
                 }
             }
         }
