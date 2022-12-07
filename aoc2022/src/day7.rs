@@ -54,8 +54,6 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     let problem2_size = dirs
         .iter()
         .filter(|d| d.size >= space_to_free)
-        .reduce(|acc, item| if acc.size < item.size { acc } else { item })
-        .unwrap()
-        .size;
+        .fold(used, |acc, item| if acc < item.size { acc } else { item.size });
     println!("problem 2: {}", problem2_size);
 }
