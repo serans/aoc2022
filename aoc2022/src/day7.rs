@@ -4,14 +4,12 @@ pub struct Dir {
 }
 
 pub fn parse_directories(lines: impl Iterator<Item = String>) -> Vec<Dir> {
+    let mut dir_index = 0;
     let mut filesystem: Vec<Dir> = Vec::new();
-
     filesystem.push(Dir {
         parent: None,
         size: 0,
     });
-
-    let mut dir_index = 0;
 
     for l in lines {
         if l == "$ cd /" {
