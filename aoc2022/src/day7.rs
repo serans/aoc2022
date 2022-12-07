@@ -55,12 +55,12 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     let used = dirs[0].size;
     let space_to_free = used - (70000000 - 30000000);
     let problem2_size = dirs.iter().fold(used, |accum, item| {
-                if item.size >= space_to_free && item.size < accum {
-                    item.size
-                } else {
-                    accum
-                }
-            });
+        if item.size >= space_to_free && item.size < accum {
+            item.size
+        } else {
+            accum
+        }
+    });
 
     println!("problem 2: {}", problem2_size);
 }
