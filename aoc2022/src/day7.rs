@@ -61,6 +61,5 @@ pub fn solve(lines: impl Iterator<Item = String>) {
             accum
         }
     });
-
     println!("problem 2: {}", problem2_size);
 }
