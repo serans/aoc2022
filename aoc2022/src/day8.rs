@@ -1,30 +1,9 @@
-/*
-* Visibility l, r, t, d
-* Height
-*/
-
 struct Tree {
     vis_up: bool,
     vis_down: bool,
     vis_left: bool,
     vis_right: bool,
-    height: u32,
-}
-
-impl Tree {
-    fn new(height: u32) -> Tree {
-        Tree {
-            height,
-            vis_up: false,
-            vis_down: false,
-            vis_left: false,
-            vis_right: false,
-        }
-    }
-
-    fn visible(&self) -> bool {
-        self.vis_up || self.vis_right || self.vis_down || self.vis_left
-    }
+    height: i32,
 }
 
 #[allow(dead_code)]
@@ -34,7 +13,13 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     for l in lines {
         let mut forest_line: Vec<Tree> = Vec::new();
         for t in l.chars() {
-            forest_line.push(Tree::new(t as u32 - 48));
+            forest_line.push(Tree{
+                height: t as i32 - 48, // ascii to int
+                vis_up: false,
+                vis_down: false,
+                vis_right: false,
+                vis_left: false,
+            });
         }
         forest.push(forest_line);
     }
@@ -44,61 +29,97 @@ pub fn solve(lines: impl Iterator<Item = String>) {
 
     // left
     for y in 0..forest_height {
+        let mut tallest_tree = -1;
         for x in 0..forest_width {
-            if x == 0 { 
-                forest[y][x].vis_left = true
-            } else {
-                forest[y][x].vis_left = forest[y][x-1].vis_left && forest[y][x-1].height < forest[y][x].height;
+            if forest[y][x].height > tallest_tree {
+                forest[y][x].vis_left = true;
+                tallest_tree = forest[y][x].height;
             }
         }
     }
 
     // right
     for y in 0..forest_height {
+        let mut tallest_tree = -1;
         for x in (0..forest_width).rev() {
-            if x == forest_width - 1 { 
-                forest[y][x].vis_right = true
-            } else {
-                forest[y][x].vis_right = forest[y][x+1].vis_right && forest[y][x+1].height < forest[y][x].height;
+            if forest[y][x].height > tallest_tree {
+                forest[y][x].vis_left = true;
+                tallest_tree = forest[y][x].height;
             }
         }
     }
 
     // top
     for x in 0..forest_width {
+        let mut tallest_tree = -1;
         for y in 0..forest_height {
-            if y == 0 { 
-                forest[y][x].vis_up = true
-            } else {
-                forest[y][x].vis_up = forest[y-1][x].vis_up && forest[y-1][x].height < forest[y][x].height;
+            if forest[y][x].height > tallest_tree {
+                forest[y][x].vis_left = true;
+                tallest_tree = forest[y][x].height;
             }
         }
     }
 
     // down
     for x in 0..forest_width {
+        let mut tallest_tree = -1;
         for y in (0..forest_height).rev() {
-            if y == forest_height-1 { 
-                forest[y][x].vis_down = true
-            } else {
-                forest[y][x].vis_down = forest[y+1][x].vis_down && forest[y+1][x].height < forest[y][x].height;
+            if forest[y][x].height > tallest_tree {
+                forest[y][x].vis_left = true;
+                tallest_tree = forest[y][x].height;
             }
         }
     }
-
 
     let mut num_visible = 0;
-    for l_x in forest {
-        for t in l_x {
-            if t.visible() {
+    for row in &forest {
+        for tree in row {
+            if  tree.vis_up || tree.vis_right || tree.vis_down || tree.vis_left {
                 num_visible += 1;
-                print!("\x1b[31m{}\x1b[0m", t.height)
-            } else {
-                print!("{}", t.height);
             }
         }
-        println!("");
     }
-    println!("number of visible trees {}", num_visible);
+    println!("Number of visible trees: {}", num_visible);
 
+    let mut max_score = 0;
+    for y in 0..forest_height {
+        for x in 0..forest_width {
+            let height = forest[y][x].height;
+            // left
+            let mut score_left = 0;
+            while x - score_left >0 {
+                score_left +=1;
+                if forest[y][x - score_left].height >= height {
+                    break;
+                }
+            }
+            // left
+            let mut score_right = 0;
+            while x + score_right < forest_width-1 {
+                score_right +=1;
+                if forest[y][x + score_right].height >= height {
+                    break;
+                }
+            }
+            // left
+            let mut score_up = 0;
+            while y - score_up >0 {
+                score_up +=1;
+                if forest[y - score_up][x].height >= height {
+                    break;
+                }
+            }
+            // left
+            let mut score_down = 0;
+            while y + score_down < forest_height-1 {
+                score_down +=1;
+                if forest[y + score_down][x].height >= height {
+                    break;
+                }
+            }
+            let score = score_up * score_down * score_right * score_left;
+            if score > max_score { max_score = score }
+        }
+    }
+    println!("Max scenic score: {}", max_score);
 }
