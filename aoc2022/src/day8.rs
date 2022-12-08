@@ -13,7 +13,7 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     for l in lines {
         let mut forest_line: Vec<Tree> = Vec::new();
         for t in l.chars() {
-            forest_line.push(Tree{
+            forest_line.push(Tree {
                 height: t as i32 - 48, // ascii to int
                 vis_up: false,
                 vis_down: false,
@@ -74,7 +74,7 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     let mut num_visible = 0;
     for row in &forest {
         for tree in row {
-            if  tree.vis_up || tree.vis_right || tree.vis_down || tree.vis_left {
+            if tree.vis_up || tree.vis_right || tree.vis_down || tree.vis_left {
                 num_visible += 1;
             }
         }
@@ -87,38 +87,40 @@ pub fn solve(lines: impl Iterator<Item = String>) {
             let height = forest[y][x].height;
             // left
             let mut score_left = 0;
-            while x - score_left >0 {
-                score_left +=1;
+            while x - score_left > 0 {
+                score_left += 1;
                 if forest[y][x - score_left].height >= height {
                     break;
                 }
             }
             // left
             let mut score_right = 0;
-            while x + score_right < forest_width-1 {
-                score_right +=1;
+            while x + score_right < forest_width - 1 {
+                score_right += 1;
                 if forest[y][x + score_right].height >= height {
                     break;
                 }
             }
             // left
             let mut score_up = 0;
-            while y - score_up >0 {
-                score_up +=1;
+            while y - score_up > 0 {
+                score_up += 1;
                 if forest[y - score_up][x].height >= height {
                     break;
                 }
             }
             // left
             let mut score_down = 0;
-            while y + score_down < forest_height-1 {
-                score_down +=1;
+            while y + score_down < forest_height - 1 {
+                score_down += 1;
                 if forest[y + score_down][x].height >= height {
                     break;
                 }
             }
             let score = score_up * score_down * score_right * score_left;
-            if score > max_score { max_score = score }
+            if score > max_score {
+                max_score = score
+            }
         }
     }
     println!("Max scenic score: {}", max_score);
