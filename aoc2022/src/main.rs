@@ -27,8 +27,8 @@ fn main() {
     //day4::solve(read_lines("input/day4.txt"));
     //day5::solve(read_lines("input/day5.txt").flatten());
     //day6::solve(read_lines("input/day6.txt").flatten());
-    day7::solve(read_lines("input/day7.txt").flatten());
+    //day7::solve(read_lines("input/day7.txt").flatten());
 
-    //day8::solve(read_lines("input/day8.txt").flatten());
-
+    day8::solve(read_lines("input/day8.txt").flatten());
+    //day8::solve(read_lines("/tmp/x.txt").flatten());
 }
