@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-fn touch(p1: &(i32, i32), p2:&(i32, i32)) -> bool {
+fn touches(p1: &(i32, i32), p2:&(i32, i32)) -> bool {
     (p1.0-p2.0).abs()<=1 && (p1.1-p2.1).abs() <=1
 }
 
@@ -38,7 +38,7 @@ pub fn solve_for_n(n: usize, lines: Vec<String>) -> usize {
             for i in 0..rope.len()-1 {
                 let front = rope[i];
                 let back = rope[i+1];
-                if !touch(&front, &back) {
+                if !touches(&front, &back) {
                     rope[i+1] = move_towards(&back, &front);
                 }
             }
