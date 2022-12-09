@@ -1,33 +1,28 @@
 use std::collections::HashSet;
 
-type Point = (i32, i32);
-/*
-fn len(p: &Point) -> f64 {
-    f64::from(p.0.abs().pow(2) + p.1.abs().pow(2)).sqrt()
-}
-fn distance(p1: &Point, p2:&Point) -> f64 {
-    len(&diff(p1,p2))
-}
-fn diff(p1: &Point, p2: &Point) -> Point {
-    (p1.0 - p2.0, p1.1 - p2.1)
-}
-fn add(p1: &Point, p2:&Point) -> Point {
-    (p1.0 + p2.0, p1.1 + p2.1)
-}*/
-fn touch(p1: &Point, p2:&Point) -> bool {
+fn touch(p1: &(i32, i32), p2:&(i32, i32)) -> bool {
     (p1.0-p2.0).abs()<=1 && (p1.1-p2.1).abs() <=1
 }
 
-#[allow(dead_code)]
-pub fn solve(lines: impl Iterator<Item = String>) {
-    let mut head = (0,0);
-    let mut tail = (0,0);
-    let mut tail_positions:HashSet<Point> = HashSet::new();
-    tail_positions.insert(tail);
+fn move_towards(origin: &(i32, i32), dest: &(i32, i32)) -> (i32, i32) {
+    let mut origin = origin.clone();
+    if origin.0 > dest.0 {origin = (origin.0-1, origin.1)}
+    if origin.0 < dest.0 {origin = (origin.0+1, origin.1)}
+    if origin.1 > dest.1 {origin = (origin.0,   origin.1-1)}
+    if origin.1 < dest.1 {origin = (origin.0,   origin.1+1)}
+    origin
+}
+
+pub fn solve_for_n(n: usize, lines: Vec<String>) -> usize {
+    let mut rope:Vec<(i32, i32)> = vec![(0,0); n];
+    let mut tail_positions:HashSet<(i32, i32)> = HashSet::new();
+    tail_positions.insert(*rope.last().unwrap());
 
     for command in lines {
         let command = command.split(" ").collect::<Vec<&str>>();
         let distance = command[1].parse::<i32>().unwrap();
+
+        let mut head = *rope.first().unwrap();
         let head_dest = match command[0] {
             "L" => ( head.0-distance, head.1 ),
             "R" => ( head.0+distance, head.1 ),
@@ -37,33 +32,26 @@ pub fn solve(lines: impl Iterator<Item = String>) {
         };
 
         while head != head_dest {
-            //head moves are always in one dimension only
-            if head.0 > head_dest.0 {
-                head = (head.0-1, head.1)
-            }
-            if head.0 < head_dest.0 {
-                head = (head.0+1, head.1)
-            }
-            if head.1 > head_dest.1 {
-                head = (head.0, head.1-1)
-            }
-            if head.1 < head_dest.1 {
-                head = (head.0, head.1+1)
-            }
-//            println!("{:?} {:?}", head, head_dest);
-            if !touch(&head, &tail) {
-                // move tail towards head
-                if head.0 > tail.0 { tail = (tail.0+1, tail.1);}
-                if head.0 < tail.0 { tail = (tail.0-1, tail.1);}
-                if head.1 > tail.1 { tail = (tail.0,   tail.1+1);}
-                if head.1 < tail.1 { tail = (tail.0,   tail.1-1);}
-            }
-//            println!("\t{:?}", tail);
-            tail_positions.insert(tail);
+            head = move_towards(&head, &head_dest);
+            rope[0] = head;
 
+            for i in 0..rope.len()-1 {
+                let front = rope[i];
+                let back = rope[i+1];
+                if !touch(&front, &back) {
+                    rope[i+1] = move_towards(&back, &front);
+                }
+            }
+            tail_positions.insert(*rope.last().unwrap());
         }
-
     }
-
-    println!("The tail visited {} positions", tail_positions.len());
+    tail_positions.len()
 }
+
+#[allow(dead_code)]
+pub fn solve(lines: impl Iterator<Item = String>) {
+    let lines: Vec<String> = lines.collect();
+    println!("Solution for rope of length 2: {}", solve_for_n(2, lines.clone()));
+    println!("Solution for rope of length 10: {}", solve_for_n(10, lines.clone()));
+}
+
