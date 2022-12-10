@@ -7,7 +7,7 @@ enum SumPipeline {
 pub fn solve(lines: impl Iterator<Item = String>) {
     // VM stuff
     let mut x_reg = 1;
-    let mut pipeline = SumPipeline::Inactive;
+    let mut adder = SumPipeline::Inactive;
     let mut eof = false;
     let mut cycle = 0;
 
@@ -17,8 +17,8 @@ pub fn solve(lines: impl Iterator<Item = String>) {
 
     while !eof {
         // execute
-        if let SumPipeline::Running{sum, delay} = pipeline {
-            pipeline = if delay == 0 {
+        if let SumPipeline::Running{sum, delay} = adder {
+            adder = if delay == 0 {
                 x_reg += sum;
                 SumPipeline::Inactive
             } else {
@@ -27,13 +27,13 @@ pub fn solve(lines: impl Iterator<Item = String>) {
         }
 
         // fetch
-        if let SumPipeline::Inactive = pipeline {
+        if let SumPipeline::Inactive = adder {
             if let Some(operation) = instructions.next() {
                 let mut op = operation.split(" ");
                 match (op.next(), op.next()) {
                     (Some("noop"), None) => {},
                     (Some("addx"), Some(op1)) => {
-                        pipeline = SumPipeline::Running{
+                        adder = SumPipeline::Running{
                             sum: op1.parse::<i32>().unwrap(),
                             delay: 1
                         }
