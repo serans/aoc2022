@@ -1,6 +1,6 @@
-struct Pipeline {
-    sum: i32,
-    delay: u32,
+enum Pipeline {
+    None,
+    Sum{sum:i32, del:u32},
 }
 
 #[allow(dead_code)]
@@ -12,25 +12,26 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     let mut power = 0; // problem1 output
     let mut instructions = lines.into_iter();
 
-    let mut pipeline: Option<Pipeline> = None;
+    let mut pipeline = Pipeline::None;
     for cycle in 0..(WIDTH * HEIGHT) {
-        if let Some(mut op) = pipeline {
-            if op.delay == 0 {
-                regx += op.sum;
-                pipeline = None;
+        // process pipeline
+        if let Pipeline::Sum{sum, del} = pipeline {
+            if del == 0 {
+                regx += sum;
+                pipeline = Pipeline::None;
             } else {
-                op.delay -=1;
-                pipeline = Some(op);
+                pipeline = Pipeline::Sum{sum, del: del-1};
             }
         }
 
-        if let None = pipeline {
+        // fetch
+        if let Pipeline::None = pipeline {
             let new_op = instructions.next().unwrap();
             if new_op != "noop" {
-                pipeline = Some(Pipeline{
+                pipeline = Pipeline::Sum{
                     sum: new_op.split(" ").nth(1).unwrap().parse::<i32>().unwrap(),
-                    delay:1
-                });
+                    del:1
+                };
             }
         }
 
