@@ -13,7 +13,6 @@ pub fn solve(lines: impl Iterator<Item = String>) {
 
     let mut instructions = lines.into_iter();
     let mut power = 0; // problem1 output
-    const WIDTH: i32 = 40; // problem2 screen width
 
     while !eof {
         // execute
@@ -51,6 +50,7 @@ pub fn solve(lines: impl Iterator<Item = String>) {
         }
 
         // problem2
+        const WIDTH: i32 = 40;
         let x = cycle % WIDTH;
         let point = if [x_reg-1, x_reg, x_reg+1].contains(&x) { '#' } else { ' ' };
         print!("{point}");
