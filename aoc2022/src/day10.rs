@@ -32,9 +32,9 @@ pub fn solve(lines: impl Iterator<Item = String>) {
                 let mut op = operation.split(" ");
                 match (op.next(), op.next()) {
                     (Some("noop"), None) => {},
-                    (Some("addx"), Some(op1)) => {
+                    (Some("addx"), Some(arg1)) => {
                         adder = AdderPipeline::Running{
-                            op1: op1.parse::<i32>().unwrap(),
+                            op1: arg1.parse::<i32>().unwrap(),
                             delay: 1
                         }
                     }
