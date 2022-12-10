@@ -1,13 +1,13 @@
-enum SumPipeline {
+enum AdderPipeline {
     Inactive,
-    Running{sum:i32, delay:u32},
+    Running{op1:i32, delay:u32},
 }
 
 #[allow(dead_code)]
 pub fn solve(lines: impl Iterator<Item = String>) {
     // VM stuff
     let mut x_reg = 1;
-    let mut adder = SumPipeline::Inactive;
+    let mut adder = AdderPipeline::Inactive;
     let mut eof = false;
     let mut cycle = 0;
 
@@ -17,24 +17,24 @@ pub fn solve(lines: impl Iterator<Item = String>) {
 
     while !eof {
         // execute
-        if let SumPipeline::Running{sum, delay} = adder {
+        if let AdderPipeline::Running{op1, delay} = adder {
             adder = if delay == 0 {
-                x_reg += sum;
-                SumPipeline::Inactive
+                x_reg += op1;
+                AdderPipeline::Inactive
             } else {
-                SumPipeline::Running{sum, delay: delay-1}
+                AdderPipeline::Running{op1, delay: delay-1}
             }
         }
 
         // fetch
-        if let SumPipeline::Inactive = adder {
+        if let AdderPipeline::Inactive = adder {
             if let Some(operation) = instructions.next() {
                 let mut op = operation.split(" ");
                 match (op.next(), op.next()) {
                     (Some("noop"), None) => {},
                     (Some("addx"), Some(op1)) => {
-                        adder = SumPipeline::Running{
-                            sum: op1.parse::<i32>().unwrap(),
+                        adder = AdderPipeline::Running{
+                            op1: op1.parse::<i32>().unwrap(),
                             delay: 1
                         }
                     }
