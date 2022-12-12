@@ -9,6 +9,7 @@ mod day8;
 mod day9;
 mod day10;
 mod day11;
+mod day12;
 
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -34,5 +35,7 @@ fn main() {
     //day8::solve(read_lines("input/day8.txt").flatten());
     //day9::solve(read_lines("input/day9.txt").flatten());
 //    day10::solve(read_lines("input/day10.txt").flatten());
-    day11::solve();
+//    day11::solve();
+    //day12::solve(read_lines("input/day12_test.txt").flatten());
+    day12::solve(read_lines("input/day12.txt").flatten());
 }

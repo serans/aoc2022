@@ -52,6 +52,7 @@ impl Monkey {
     }
 }
 
+#[allow(dead_code)]
 pub fn solve() {
     let mut monkeys: Vec<Monkey> = vec![
         // faster than parsing...
@@ -135,8 +136,7 @@ pub fn solve() {
     for _ in 0..10000 {
         for i in 0..monkeys.len() {
             for throw in monkeys[i].turn(false, lcm) {
-                let dest = &mut monkeys[throw.monkey_index].items;
-                dest.insert(dest.len(), throw.item);
+                monkeys[throw.monkey_index].items.push(throw.item);
             }
         }
     }
