@@ -1,6 +1,6 @@
 enum AdderPipeline {
     Inactive,
-    Running{op1:i32, delay:u32},
+    Running { op1: i32, delay: u32 },
 }
 
 #[allow(dead_code)]
@@ -16,12 +16,15 @@ pub fn solve(lines: impl Iterator<Item = String>) {
 
     while !eof {
         // execute
-        if let AdderPipeline::Running{op1, delay} = adder {
+        if let AdderPipeline::Running { op1, delay } = adder {
             adder = if delay == 0 {
                 x_reg += op1;
                 AdderPipeline::Inactive
             } else {
-                AdderPipeline::Running{op1, delay: delay-1}
+                AdderPipeline::Running {
+                    op1,
+                    delay: delay - 1,
+                }
             }
         }
 
@@ -30,14 +33,16 @@ pub fn solve(lines: impl Iterator<Item = String>) {
             if let Some(operation) = instructions.next() {
                 let mut op = operation.split(" ");
                 match (op.next(), op.next()) {
-                    (Some("noop"), None) => {},
+                    (Some("noop"), None) => {}
                     (Some("addx"), Some(arg1)) => {
-                        adder = AdderPipeline::Running{
+                        adder = AdderPipeline::Running {
                             op1: arg1.parse::<i32>().unwrap(),
-                            delay: 1
+                            delay: 1,
                         }
                     }
-                    _ => {panic!("unknown command {}", operation)}
+                    _ => {
+                        panic!("unknown command {}", operation)
+                    }
                 }
             } else {
                 eof = true;
@@ -45,16 +50,20 @@ pub fn solve(lines: impl Iterator<Item = String>) {
         }
 
         // problem1
-        if [20, 60, 100, 140, 180, 220].contains(&(cycle+1)){
-            power += x_reg*(cycle+1);
+        if [20, 60, 100, 140, 180, 220].contains(&(cycle + 1)) {
+            power += x_reg * (cycle + 1);
         }
 
         // problem2
         const WIDTH: i32 = 40;
         let x = cycle % WIDTH;
-        let point = if [x_reg-1, x_reg, x_reg+1].contains(&x) { '#' } else { ' ' };
+        let point = if [x_reg - 1, x_reg, x_reg + 1].contains(&x) {
+            '#'
+        } else {
+            ' '
+        };
         print!("{point}");
-        if x == WIDTH-1 {
+        if x == WIDTH - 1 {
             println!("")
         }
 
