@@ -72,6 +72,7 @@ impl Search {
                     .frontier
                     .binary_search_by(|probe| probe.fscore.cmp(&node.fscore))
                 {
+                    // @TODO: no easier way to insert keeping vector sorted?
                     Ok(pos) => self.frontier.insert(pos, node),
                     Err(pos) => self.frontier.insert(pos, node),
                 }
