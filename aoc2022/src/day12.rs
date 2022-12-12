@@ -23,17 +23,21 @@ struct Search {
 }
 
 impl Search {
-
     fn solve(problem: Problem) -> Option<u32> {
-        Search{problem, history:HashMap::new(), expanded:HashSet::new(), frontier: VecDeque::new()}.a_star_search()
+        Search {
+            problem,
+            history: HashMap::new(),
+            expanded: HashSet::new(),
+            frontier: VecDeque::new(),
+        }
+        .a_star_search()
     }
 
     fn a_star_search(&mut self) -> Option<u32> {
-
         self.frontier.push_back(SearchNode {
             pos: self.problem.start,
             cost: 0,
-            fscore: manhattan(self.problem.start, self.problem.goal),
+            fscore: manhattan_distance(self.problem.start, self.problem.goal),
         });
 
         const LIMIT: u32 = 1000000;
@@ -51,9 +55,9 @@ impl Search {
             } else {
                 // try moves
                 self.try_move(&next, 0, 1);
-                self.try_move(&next, 0,-1);
+                self.try_move(&next, 0, -1);
                 self.try_move(&next, 1, 0);
-                self.try_move(&next,-1, 0);
+                self.try_move(&next, -1, 0);
             }
         }
         None
@@ -64,7 +68,10 @@ impl Search {
             let pos = node.pos;
             let cost = node.cost;
             if !self.expanded.contains(&(node.pos, node.cost)) {
-                match self.frontier.binary_search_by(|probe| probe.fscore.cmp(&node.fscore)) {
+                match self
+                    .frontier
+                    .binary_search_by(|probe| probe.fscore.cmp(&node.fscore))
+                {
                     Ok(pos) => self.frontier.insert(pos, node),
                     Err(pos) => self.frontier.insert(pos, node),
                 }
@@ -108,13 +115,18 @@ impl Search {
                 return None;
             }
         }
+
         Some(SearchNode {
             pos: new_position,
             cost: new_cost,
-            fscore: new_cost + manhattan(origin.pos, new_position),
+            fscore: new_cost + manhattan_distance(origin.pos, new_position),
         })
     }
 }
+fn manhattan_distance(p1: Position, p2: Position) -> u32 {
+    p1.0.abs_diff(p2.0) + p1.1.abs_diff(p2.1)
+}
+
 
 fn read_problem(lines: impl Iterator<Item = String>) -> Problem {
     let mut map: Map = Vec::new();
@@ -149,11 +161,6 @@ fn read_problem(lines: impl Iterator<Item = String>) -> Problem {
         panic!("Wrong problem input");
     }
 }
-
-fn manhattan(p1: Position, p2: Position) -> u32 {
-    p1.0.abs_diff(p2.0) + p1.1.abs_diff(p2.1)
-}
-
 
 pub fn solve(lines: impl Iterator<Item = String>) {
     let problem = read_problem(lines);
