@@ -1,6 +1,5 @@
 use std::cmp::Ordering;
 
-#[derive(Debug)]
 enum List {
     Number(u32),
     List(Vec<List>),
@@ -21,7 +20,6 @@ struct Parser {
     text: String,
     i: usize,
 }
-use std::str;
 
 impl Parser {
     fn parse(text: String) -> List {
@@ -32,7 +30,7 @@ impl Parser {
     }
 
     fn parse_number_from(&self, start: usize) -> u32 {
-        str::from_utf8(&self.text.as_bytes()[start..self.i])
+        std::str::from_utf8(&self.text.as_bytes()[start..self.i])
             .unwrap()
             .parse::<u32>()
             .unwrap()
@@ -73,6 +71,7 @@ impl Parser {
     }
 }
 
+// @TODO check PartialOrd trait
 fn cmp(left: &List, right: &List) -> Ordering {
     match left {
         List::Number(l) => {
@@ -135,15 +134,13 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     println!("Solution 1: {}", good_pair_sum);
     
     // problem2, add separator packets
-    let p1 = Parser::parse(String::from("[[2]]"));
-    let p2 = Parser::parse(String::from("[[6]]"));
+    let separator1 = Parser::parse(String::from("[[2]]"));
+    let separator2 = Parser::parse(String::from("[[6]]"));
 
-    packets.push(p1.clone());
-    packets.push(p2.clone());
+    packets.push(separator1.clone());
+    packets.push(separator2.clone());
     packets.sort_by(|a,b| cmp(a,b));
-    let pos1 = packets.iter().position(|r| cmp(&r,&p1) == Ordering::Equal).unwrap()+1;
-    let pos2 = packets.iter().position(|r| cmp(&r,&p2) == Ordering::Equal).unwrap()+1;
-    // 23862 too low
-    // 19046 too low
+    let pos1 = packets.iter().position(|r| cmp(&r,&separator1) == Ordering::Equal).unwrap()+1;
+    let pos2 = packets.iter().position(|r| cmp(&r,&separator2) == Ordering::Equal).unwrap()+1;
     println!("Solution 2: {}", pos1 * pos2);
 }
