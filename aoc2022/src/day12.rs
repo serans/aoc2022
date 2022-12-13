@@ -128,7 +128,6 @@ fn manhattan_distance(p1: Position, p2: Position) -> u32 {
     p1.0.abs_diff(p2.0) + p1.1.abs_diff(p2.1)
 }
 
-
 fn read_problem(lines: impl Iterator<Item = String>) -> Problem {
     let mut map: Map = Vec::new();
     let mut goal: Option<Position> = None;
@@ -163,6 +162,7 @@ fn read_problem(lines: impl Iterator<Item = String>) -> Problem {
     }
 }
 
+#[allow(dead_code)]
 pub fn solve(lines: impl Iterator<Item = String>) {
     let problem = read_problem(lines);
 
