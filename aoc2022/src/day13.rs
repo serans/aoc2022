@@ -141,8 +141,8 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     packets.push(p1.clone());
     packets.push(p2.clone());
     packets.sort_by(|a,b| cmp(a,b));
-    let pos1 = packets.iter().position(|r| cmp(&r,&p1) == Ordering::Equal ).unwrap();
-    let pos2 = packets.iter().position(|r| cmp(&r,&p2) == Ordering::Equal ).unwrap();
+    let pos1 = packets.iter().position(|r| cmp(&r,&p1) == Ordering::Equal).unwrap()+1;
+    let pos2 = packets.iter().position(|r| cmp(&r,&p2) == Ordering::Equal).unwrap()+1;
     // 23862 too low
     // 19046 too low
     println!("Solution 2: {}", pos1 * pos2);
