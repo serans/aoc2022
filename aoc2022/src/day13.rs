@@ -107,6 +107,7 @@ fn cmp(left: &List, right: &List) -> Ordering {
     }
 }
 
+#[allow(unused)]
 pub fn solve(lines: impl Iterator<Item = String>) {
     // parsing
     let lines = lines.collect::<Vec<String>>();
