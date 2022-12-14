@@ -66,6 +66,7 @@ impl Map {
         }
     }
 
+    #[allow(unused)]
     fn print(&self) {
         for y in 0..self.height as usize {
             for x in 0..self.width as usize {
@@ -76,6 +77,51 @@ impl Map {
         println!("");
     }
 
+
+    fn sand_step(&self, x:usize, y:usize) -> Option<(usize, usize)> {
+        // sand fell of the bottom
+        if y == self.height-1 { return None }
+
+        // sand continues straight down
+        if self.cells[y+1][x] == '.' { return Some((x, y+1)) }
+
+        // sand fell of the left edge
+        if x == 0 { return None }
+
+        // sand continues diagonal left
+        if self.cells[y+1][x-1] == '.' { return Some((x-1, y+1))}
+
+        // sand fell of the right edge
+        if x == self.width-1 { return None }
+
+        // sand continues diagonal right
+        if self.cells[y+1][x+1] == '.' { return Some((x+1, y+1))}
+
+        // sand stands where it is
+        return Some((x,y))
+    }
+
+    fn drop_sand(&mut self) -> bool {
+        // sand starts at 500,0
+        let mut sand_x:usize = 500-self.x_offset;
+        let mut sand_y:usize = 0;
+        
+        loop {
+            match self.sand_step(sand_x, sand_y) {
+                Some((new_x, new_y)) => { 
+                    if new_x == sand_x && new_y == sand_y {
+                        self.cells[sand_y][sand_x] = 'o';
+                        return true;
+                    } else {
+                        sand_x = new_x;
+                        sand_y = new_y;
+                    }
+                }
+                None => {return false}
+            }
+        }
+    }
+
 }
 
 #[allow(dead_code)]
@@ -84,5 +130,17 @@ pub fn solve(lines: impl Iterator<Item = String>) {
 
     let mut map = Map::new(&lines);
     map.read_walls(&lines);
-    map.print();
+  
+    let mut n=0;
+    /*
+    for _ in 0..27 {
+        println!("{n} ---------------------");
+        let x = map.drop_sand();
+        if x {println!("continue")} else {println!("stop")}
+        map.print();
+        n+=1;
+    }
+        */
+    while map.drop_sand() { n+=1 }
+    println!("Problem 1: Dropped {n} grains of sand");
 }
