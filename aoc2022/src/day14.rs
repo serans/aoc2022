@@ -23,6 +23,7 @@ impl Map {
             cells: Vec::new(),
         };
         map.cells = vec![vec!['.'; map.width]; map.height];
+        map.read_walls(lines);
         map
     }
 
@@ -111,7 +112,6 @@ pub fn solve(lines: impl Iterator<Item = String>) {
 
     // problem 1
     let mut map = Map::new(&lines);
-    map.read_walls(&lines);
     let mut n=0;
     while map.drop_sand() { n+=1 }
     println!("Problem 1: Dropped {n} grains of sand");
@@ -122,7 +122,6 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     // add floor below the map
     lines.push(bottom_line);
     let mut map2 = Map::new(&lines);
-    map2.read_walls(&lines);
 
     let mut n=0;
     while map2.drop_sand() {
