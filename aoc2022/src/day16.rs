@@ -1,124 +1,124 @@
-/*
-Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
-Valve BB has flow rate=13; tunnels lead to valves CC, AA
-Valve CC has flow rate=2; tunnels lead to valves DD, BB
-Valve DD has flow rate=20; tunnels lead to valves CC, AA, EE
-Valve EE has flow rate=3; tunnels lead to valves FF, DD
-Valve FF has flow rate=0; tunnels lead to valves EE, GG
-Valve GG has flow rate=0; tunnels lead to valves FF, HH
-Valve HH has flow rate=22; tunnel leads to valve GG
-Valve II has flow rate=0; tunnels lead to valves AA, JJ
-Valve JJ has flow rate=21; tunnel leads to valve II
-
-    II ------ <JJ:21>
-     |
-    AA ------ <DD:20> - <EE:3> - FF - GG - <HH:22> 
-     |           |
-    <BB:13> - <CC:2>
+/* new solution:
+* - Each valve represented by a number 0 to 56
+* - Each one can be a bit in a i64
+* - Therefore connectivity graph is just a number
+* - Also, list of open valves is just a number
 */
 
-use regex::Regex;
-use std::collections::HashMap;
 use std::collections::HashSet;
+use regex::Regex;
 
-#[derive(Debug)]
-struct Valve {
-    name: String,
+#[derive(Eq, Hash, PartialEq)]
+struct State {
+    time_left: u8,
+    position: u8,
+    last_position: u8,
+    open_valves: u64,
     psi: u32,
-    distance: HashMap<String, u32>,
 }
 
-impl Valve {
-    fn from(text: &String) -> Valve {
-        let re = Regex::new(r"Valve ([A-Z][A-Z]) has flow rate=(\d+); tunnels? leads? to valves? (.*)").unwrap();
-        let cap = re.captures(text.as_str()).unwrap();
-        let mut valve = Valve{
-            name: String::from(&cap[1]),
-            psi: cap[2].parse::<u32>().unwrap(),
-            distance: HashMap::new(),
-        };
-        for c in cap[3].split(",") {
-            valve.distance.insert(String::from(c.trim()), 1);
+fn calculate_psi(open_valves:u64, psi:&Vec<u8>) -> u32 {
+    let mut output:u32 = 0;
+    let mut open_valves = open_valves;
+    let mut i=0;
+    while open_valves > 0 {
+        if open_valves & 0x1 == 0x1 {
+            output += psi[i] as u32;
         }
-        valve
+        open_valves = open_valves >> 1;
+        i+=1;
     }
+    output
 }
 
 #[allow(dead_code)]
 pub fn solve(lines: impl Iterator<Item = String>) {
-    let mut valves:HashMap<String, Valve> = HashMap::new();
-    for row in lines {
-        let v = Valve::from(&row);
-        valves.insert(v.name.clone(), v);
-    }
+    let mut valves:Vec<String> = Vec::new();
+    let mut psi:Vec<u8> = Vec::new();
+    let mut connections:Vec<u64> = Vec::new();
 
-    let mut valve_names:Vec<String> = valves.keys().cloned().collect();
-    valve_names.sort();
+    // read input
+    let re = Regex::new(r"Valve ([A-Z][A-Z]) has flow rate=(\d+); tunnels? leads? to valves? (.*)").unwrap();
+    for line in lines {
+        let cap = re.captures(line.as_str()).unwrap();
 
-    // update distances
-    for name in valve_names.clone() {
-        // frontier: list of nodes to be explored
-        let mut frontier: Vec<(String, u32)> = valves[&name].distance.clone().into_iter().collect();
-        // visited: list of nodes already visited (to avoid cycles)
-        let mut visited: HashSet<String> = HashSet::from([name.clone()]);
-        while !frontier.is_empty() {
-            // get the first node in the list (at the beginning, one of the immediate neighbors)
-            let (neighbor, dist) = frontier.pop().unwrap();
-            if visited.contains(&neighbor) { continue }
-            visited.insert(neighbor.clone());
-            valves.get_mut(&name).unwrap().distance.insert(neighbor.clone(), dist);
-            for (n,d) in valves[&neighbor].distance.clone() {
-                frontier.insert(0, (n,dist+d)); // d is always 1, but whatever
+        let name = String::from(&cap[1]);
+        if !valves.contains(&name) {
+            valves.push(name.clone());
+            connections.push(0);
+            psi.push(0);
+        }
+        let valve_index = valves.iter().position(|x| x==&name).unwrap();
+        psi[valve_index] = cap[2].parse::<u8>().unwrap();
+
+        for c in cap[3].split(",") {
+            let other = String::from(c.trim());
+            if !valves.contains(&other) {
+                valves.push(other.clone());
+                connections.push(0);
+                psi.push(0);
             }
+            let position = valves.iter().position(|x| x==&other).unwrap();
+            connections[valve_index] |= 1 << position;
         }
     }
 
-    // now we have a list of nodes, each with distances to one another
-    // let's try a greedy algorithm
-    let mut node = String::from("AA");
-    let mut open:HashSet<String> = HashSet::new();
-    let mut pressure = 0;
-    let mut valves_psi = 0;
-    let mut t:i64 = 0;
-    while t<30 {
-        println!("Node: {node} Time: {t} // released {pressure} | {valves_psi}");
-        let x = valves.get(&node).unwrap().clone().distance.iter().clone()
-            // ignore valves that are already open, or that have no pressure
-            .filter(|(v,_)| !open.contains(*v) && valves.get(*v).unwrap().psi >0 )
-            .reduce(
-                // find the top value node
-                |(v1, d1), (v2, d2)| {
-                    let dist1:i64 = *d1 as i64;
-                    let dist2:i64 = *d2 as i64;
-                    let value1:i64 = (31-t-dist1)*valves[v1].psi as i64;
-                    let value2:i64 = (31-t-dist2)*valves[v2].psi as i64;
-                    if value1 > value2 { (v1, d1) } else { (v2, d2) }
-                }
-            );
-        
-        match x {
-            None => {
-                println!(" - No new valve to open");
-                pressure += valves_psi;
-                t+=1;
-            }
-            Some(y) => {
-                node = y.0.clone();
-                let distance = y.1;
-                let new_pressure = valves[&node].psi;
-                println!(" - opening node: {} (+{} psi)", node, new_pressure);
-                t+=*distance as i64 + 1; // +1 minute to open the valve
-                pressure += valves_psi * (distance +1); // open valves release pressure
-                valves_psi += valves[&node].psi; // we add the new valve
-                open.insert(node.clone()); // we mark as open
-                println!("      {} minute(s) to reach the valve", distance);
-                println!("       1 minute to open the valve");
-                println!("-----------");
-                println!("TIME: {t}")
-                // 1596 is too low
-            }
-        }
-    }
-    println!("Final pressure {pressure}");
+    let init_state = State {
+        time_left: 30,
+        position: valves.iter().position(|x| x=="AA").unwrap() as u8,
+        last_position: valves.iter().position(|x| x=="AA").unwrap() as u8,
+        open_valves: 0x0,
+        psi: 0,
+    };
 
+    let mut frontier:Vec<State> = Vec::new();
+    let mut expanded:HashSet<State> = HashSet::new();
+    frontier.push(init_state);
+   
+    let mut max_psi:Option<u32> = None;
+    // explore moves
+    while !frontier.is_empty() {
+        let next = frontier.pop().unwrap();
+        if expanded.contains(&next) {
+            continue;
+        }
+
+        // time is out, check out max
+        if next.time_left == 0 {
+            max_psi = Some(max_psi.unwrap_or(next.psi).max(next.psi));
+            continue;
+        }
+
+        let psi_released = next.psi + calculate_psi(next.open_valves, &psi);
+
+        // since moving is free, we don't consider the case of just sitting
+        let mut moves = connections[next.position as usize];
+        let mut i:u8 = 0;
+        while moves != 0 {
+            if moves & 0x1 == 1 && next.last_position != i {
+                frontier.push(State{
+                    time_left: next.time_left -1,
+                    position: i,
+                    last_position: next.position,
+                    open_valves: next.open_valves,
+                    psi: psi_released,
+                });
+            } 
+            moves = moves >> 1;
+            i += 1;
+        }
+        // 2) open valve if it has pressure and it wasn't open already
+        if psi[next.position as usize]>0 && next.open_valves & 1<<next.position == 0 {
+            frontier.push(State{
+                time_left: next.time_left -1,
+                position: next.position,
+                last_position: next.position,
+                open_valves: next.open_valves | 1<<next.position,
+                psi: psi_released,
+            });
+        }
+        expanded.insert(next);
+    }
+
+    println!("max psi: {}", max_psi.unwrap());
 }

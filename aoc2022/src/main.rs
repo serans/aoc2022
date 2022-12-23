@@ -48,5 +48,5 @@ fn main() {
 //    day14::solve(read_lines("input/day14.txt").flatten());
 //    day15::solve(read_lines("input/day15_test.txt").flatten());
 //  day15::solve(read_lines("input/day15.txt").flatten());
-    day16::solve(read_lines("input/day16_test.txt").flatten());
+    day16::solve(read_lines("input/day16.txt").flatten());
 }
