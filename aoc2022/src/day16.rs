@@ -12,7 +12,6 @@ use regex::Regex;
 struct State {
     time_left: u8,
     position: u8,
-    last_position: u8,
     open_valves: u64,
     psi: u32,
 }
@@ -66,7 +65,6 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     let init_state = State {
         time_left: 30,
         position: valves.iter().position(|x| x=="AA").unwrap() as u8,
-        last_position: valves.iter().position(|x| x=="AA").unwrap() as u8,
         open_valves: 0x0,
         psi: 0,
     };
@@ -76,7 +74,8 @@ pub fn solve(lines: impl Iterator<Item = String>) {
     frontier.push(init_state);
    
     let mut max_psi:Option<u32> = None;
-    // explore moves
+
+    // explore all possible moves
     while !frontier.is_empty() {
         let next = frontier.pop().unwrap();
         if expanded.contains(&next) {
@@ -91,15 +90,14 @@ pub fn solve(lines: impl Iterator<Item = String>) {
 
         let psi_released = next.psi + calculate_psi(next.open_valves, &psi);
 
-        // since moving is free, we don't consider the case of just sitting
+        // since moving is free, we don't consider the case of just doing nothing
         let mut moves = connections[next.position as usize];
         let mut i:u8 = 0;
         while moves != 0 {
-            if moves & 0x1 == 1 && next.last_position != i {
+            if moves & 0x1 == 1 {
                 frontier.push(State{
                     time_left: next.time_left -1,
                     position: i,
-                    last_position: next.position,
                     open_valves: next.open_valves,
                     psi: psi_released,
                 });
@@ -112,7 +110,6 @@ pub fn solve(lines: impl Iterator<Item = String>) {
             frontier.push(State{
                 time_left: next.time_left -1,
                 position: next.position,
-                last_position: next.position,
                 open_valves: next.open_valves | 1<<next.position,
                 psi: psi_released,
             });
