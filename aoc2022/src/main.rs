@@ -6,6 +6,7 @@ mod day13;
 mod day14;
 mod day15;
 mod day16;
+mod day17;
 mod day2;
 mod day3;
 mod day4;
@@ -44,9 +45,10 @@ fn main() {
     //day12::solve(read_lines("input/day12.txt").flatten());
     //day13::solve(read_lines("input/day13_test.txt").flatten());
     //day13::solve(read_lines("input/day13.txt").flatten());
-//    day14::solve(read_lines("input/day14_test.txt").flatten());
-//    day14::solve(read_lines("input/day14.txt").flatten());
-//    day15::solve(read_lines("input/day15_test.txt").flatten());
-//  day15::solve(read_lines("input/day15.txt").flatten());
-    day16::solve(read_lines("input/day16.txt").flatten());
+    //day14::solve(read_lines("input/day14_test.txt").flatten());
+    //day14::solve(read_lines("input/day14.txt").flatten());
+    //day15::solve(read_lines("input/day15_test.txt").flatten());
+    //day15::solve(read_lines("input/day15.txt").flatten());
+    //day16::solve(read_lines("input/day16.txt").flatten());
+    day17::solve(read_lines("input/day17_test.txt").flatten());
 }
